@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ThalesTestAndroidApp</string>
+    <string name="error_request_timeout">Try again later</string>
+    <string name="error_too_many_requests">Try again later</string>
+    <string name="error_no_internet">Check your internet connection</string>
+    <string name="error_unknown">Try again later</string>
+</resources>
