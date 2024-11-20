@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
-        android:name="com.example.thalestestandroidapp.ProductDetailFragment"
+        android:name="com.example.thalestestandroidapp.presentation.product_detail.ProductDetailFragment"
         android:label="fragment_product_detail"
         tools:layout="@layout/fragment_product_detail" />
 </navigation>
