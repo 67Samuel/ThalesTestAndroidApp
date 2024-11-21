@@ -1,6 +1,7 @@
 package com.example.thalestestandroidapp.domain.models
 
 data class Product(
+    val id: Int,
     val name: String,
     val type: Type,
     val imageUrl: String,
@@ -9,4 +10,8 @@ data class Product(
 
 enum class Type {
     PERSONAL, FAMILY, COMMERCIAL
+}
+
+enum class SortOptions {
+    NAME_ASC, NAME_DESC
 }

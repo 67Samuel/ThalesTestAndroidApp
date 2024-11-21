@@ -4,13 +4,19 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.Navigation
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductListBinding
 import com.example.thalestestandroidapp.domain.models.Product
 import com.example.thalestestandroidapp.domain.models.Type
 import com.example.thalestestandroidapp.presentation.MainViewModel
+import com.example.thalestestandroidapp.presentation.utils.toMessage
 import com.google.android.flexbox.FlexboxLayoutManager
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ProductListFragment : Fragment(R.layout.fragment_product_list),
@@ -24,101 +30,8 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        subscribeObservers()
         initRecyclerView()
-        recyclerViewAdapter.submitList(
-            listOf(
-                Product(
-                    name = "Polly Day",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=mus",
-                    description = "porta"
-                ),
-                Product(
-                    name = "Chadwick Bush",
-                    type = Type.FAMILY,
-                    imageUrl = "https://duckduckgo.com/?q=lorem",
-                    description = "consetetur"
-                ),
-                Product(
-                    name = "Alexis Harrington",
-                    type = Type.COMMERCIAL,
-                    imageUrl = "http://www.bing.com/search?q=error",
-                    description = "fames"
-                ),
-                Product(
-                    name = "Polly Day",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=mus",
-                    description = "porta"
-                ),
-                Product(
-                    name = "Chadwick Bush",
-                    type = Type.FAMILY,
-                    imageUrl = "https://duckduckgo.com/?q=lorem",
-                    description = "consetetur"
-                ),
-                Product(
-                    name = "Alexis Harrington",
-                    type = Type.COMMERCIAL,
-                    imageUrl = "http://www.bing.com/search?q=error",
-                    description = "fames"
-                ),
-                Product(
-                    name = "Polly Day",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=mus",
-                    description = "porta"
-                ),
-                Product(
-                    name = "Chadwick Bush",
-                    type = Type.FAMILY,
-                    imageUrl = "https://duckduckgo.com/?q=lorem",
-                    description = "consetetur"
-                ),
-                Product(
-                    name = "Alexis Harrington",
-                    type = Type.COMMERCIAL,
-                    imageUrl = "http://www.bing.com/search?q=error",
-                    description = "fames"
-                ),
-                Product(
-                    name = "Polly Day",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=mus",
-                    description = "porta"
-                ),
-                Product(
-                    name = "Chadwick Bush",
-                    type = Type.FAMILY,
-                    imageUrl = "https://duckduckgo.com/?q=lorem",
-                    description = "consetetur"
-                ),
-                Product(
-                    name = "Alexis Harrington",
-                    type = Type.COMMERCIAL,
-                    imageUrl = "http://www.bing.com/search?q=error",
-                    description = "fames"
-                ),
-                Product(
-                    name = "Polly Day",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=mus",
-                    description = "porta"
-                ),
-                Product(
-                    name = "Chadwick Bush",
-                    type = Type.FAMILY,
-                    imageUrl = "https://duckduckgo.com/?q=lorem",
-                    description = "consetetur"
-                ),
-                Product(
-                    name = "Alexis Harrington",
-                    type = Type.COMMERCIAL,
-                    imageUrl = "http://www.bing.com/search?q=error",
-                    description = "fames"
-                ),
-            )
-        )
     }
 
     private fun initRecyclerView() {
@@ -130,8 +43,36 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
         }
     }
 
+    private fun subscribeObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.productList.collect { list ->
+                    recyclerViewAdapter.submitList(list)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.productListEvents.collect { event ->
+                    when (event) {
+                        is ProductListEvents.Error -> {
+                            Timber.e(event.error.toMessage(requireContext()))
+                        }
+                        is ProductListEvents.NavigateToProductDetails -> {
+                            Navigation.findNavController(binding.root).navigate(
+                                ProductListFragmentDirections
+                                    .actionProductListFragmentToProductDetailFragment()
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onItemSelected(position: Int, item: Product) {
-        Timber.d("clicked $position")
+        viewModel.onAction(ProductListAction.OnProductClick(item.id))
     }
 }
 

@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.domain.util.NetworkError
 
-fun NetworkError.toString(context: Context): String {
+fun NetworkError.toMessage(context: Context): String {
     val resId = when(this) {
         NetworkError.REQUEST_TIMEOUT -> R.string.error_request_timeout
         NetworkError.TOO_MANY_REQUESTS -> R.string.error_too_many_requests
