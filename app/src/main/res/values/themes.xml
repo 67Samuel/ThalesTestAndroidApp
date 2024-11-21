@@ -58,6 +58,11 @@
         <item name="android:textColor">@color/md_theme_onSurface</item>
     </style>
 
+    <style name="roundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
     <style name="Theme.ThalesTestAndroidApp" parent="Base.Theme.ThalesTestAndroidApp" />
 
 </resources>

@@ -72,6 +72,7 @@ dependencies {
 
     // RecyclerView (for some reason, bindingAdapterPosition sometimes becomes unresolved without this)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.flexbox)
 
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
