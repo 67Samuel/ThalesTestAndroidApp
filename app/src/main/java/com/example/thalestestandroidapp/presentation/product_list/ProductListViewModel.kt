@@ -1,11 +1,9 @@
-package com.example.thalestestandroidapp.presentation
+package com.example.thalestestandroidapp.presentation.product_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thalestestandroidapp.domain.models.Product
 import com.example.thalestestandroidapp.domain.models.Type
-import com.example.thalestestandroidapp.presentation.product_list.ProductListAction
-import com.example.thalestestandroidapp.presentation.product_list.ProductListEvents
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
@@ -17,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainViewModel : ViewModel() {
+class ProductListViewModel : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()

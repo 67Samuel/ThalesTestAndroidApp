@@ -12,8 +12,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductListBinding
 import com.example.thalestestandroidapp.domain.models.Product
-import com.example.thalestestandroidapp.domain.models.Type
-import com.example.thalestestandroidapp.presentation.MainViewModel
 import com.example.thalestestandroidapp.presentation.utils.toMessage
 import com.google.android.flexbox.FlexboxLayoutManager
 import kotlinx.coroutines.launch
@@ -23,7 +21,7 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     ProductRecyclerViewAdapter.Interaction {
 
     private val binding by viewBinding(FragmentProductListBinding::bind)
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: ProductListViewModel by activityViewModels()
 
     private lateinit var recyclerViewAdapter: ProductRecyclerViewAdapter
 
@@ -65,6 +63,18 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
                                     .actionProductListFragmentToProductDetailFragment()
                             )
                         }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isLoading.collect { isLoading ->
+                    binding.progressBar.visibility = if (isLoading) {
+                        View.VISIBLE
+                    } else {
+                        View.GONE
                     }
                 }
             }
