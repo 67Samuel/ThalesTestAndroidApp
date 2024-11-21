@@ -2,10 +2,11 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.Material3.CardView.Elevated"
+    style="@style/Widget.Material3.CardView.Outlined"
     app:cardBackgroundColor="@color/md_theme_primaryContainer"
-    android:layout_width="200dp"
-    android:layout_height="250dp">
+    android:layout_width="130dp"
+    android:layout_height="190dp"
+    android:layout_margin="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,7 +17,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/card_image"
             android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_height="90dp"
             app:srcCompat="@drawable/thales_image_1"
             android:scaleType="fitCenter"
             android:contentDescription="@string/product_image"
@@ -26,46 +27,54 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <!-- Title, secondary and supporting text -->
-        <TextView
-            android:id="@+id/card_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Product"
-            android:background="@color/md_theme_primaryContainer"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:layout_margin="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_image" />
-
-        <TextView
-            android:id="@+id/card_type"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="PERSONAL"
-            android:textStyle="italic"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?android:attr/textColorSecondary"
-            android:padding="8dp"
-            android:background="@drawable/round_outline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_title"/>
-
-        <TextView
-            android:id="@+id/card_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:ellipsize="end"
-            android:maxLines="2"
+            android:layout_height="0dp"
             android:background="@color/md_theme_primaryContainer"
-            android:text="@string/lorem_ipsum"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?android:attr/textColorTertiary"
+            android:padding="4dp"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_type" />
+            app:layout_constraintTop_toBottomOf="@id/card_image"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Title, secondary and supporting text -->
+            <TextView
+                android:id="@+id/card_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Alexis Harrington"
+                android:background="@color/md_theme_primaryContainer"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/card_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="PERSONAL"
+                android:textStyle="italic"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?android:attr/textColorSecondary"
+                android:paddingHorizontal="3dp"
+                android:background="@drawable/round_outline"/>
+
+            <TextView
+                android:id="@+id/card_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:background="@color/md_theme_primaryContainer"
+                android:text="@string/lorem_ipsum"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?android:attr/textColorTertiary"/>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

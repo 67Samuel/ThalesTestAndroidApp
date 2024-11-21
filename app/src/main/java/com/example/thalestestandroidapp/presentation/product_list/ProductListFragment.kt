@@ -44,7 +44,79 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
                     type = Type.COMMERCIAL,
                     imageUrl = "http://www.bing.com/search?q=error",
                     description = "fames"
-                )
+                ),
+                Product(
+                    name = "Polly Day",
+                    type = Type.PERSONAL,
+                    imageUrl = "https://duckduckgo.com/?q=mus",
+                    description = "porta"
+                ),
+                Product(
+                    name = "Chadwick Bush",
+                    type = Type.FAMILY,
+                    imageUrl = "https://duckduckgo.com/?q=lorem",
+                    description = "consetetur"
+                ),
+                Product(
+                    name = "Alexis Harrington",
+                    type = Type.COMMERCIAL,
+                    imageUrl = "http://www.bing.com/search?q=error",
+                    description = "fames"
+                ),
+                Product(
+                    name = "Polly Day",
+                    type = Type.PERSONAL,
+                    imageUrl = "https://duckduckgo.com/?q=mus",
+                    description = "porta"
+                ),
+                Product(
+                    name = "Chadwick Bush",
+                    type = Type.FAMILY,
+                    imageUrl = "https://duckduckgo.com/?q=lorem",
+                    description = "consetetur"
+                ),
+                Product(
+                    name = "Alexis Harrington",
+                    type = Type.COMMERCIAL,
+                    imageUrl = "http://www.bing.com/search?q=error",
+                    description = "fames"
+                ),
+                Product(
+                    name = "Polly Day",
+                    type = Type.PERSONAL,
+                    imageUrl = "https://duckduckgo.com/?q=mus",
+                    description = "porta"
+                ),
+                Product(
+                    name = "Chadwick Bush",
+                    type = Type.FAMILY,
+                    imageUrl = "https://duckduckgo.com/?q=lorem",
+                    description = "consetetur"
+                ),
+                Product(
+                    name = "Alexis Harrington",
+                    type = Type.COMMERCIAL,
+                    imageUrl = "http://www.bing.com/search?q=error",
+                    description = "fames"
+                ),
+                Product(
+                    name = "Polly Day",
+                    type = Type.PERSONAL,
+                    imageUrl = "https://duckduckgo.com/?q=mus",
+                    description = "porta"
+                ),
+                Product(
+                    name = "Chadwick Bush",
+                    type = Type.FAMILY,
+                    imageUrl = "https://duckduckgo.com/?q=lorem",
+                    description = "consetetur"
+                ),
+                Product(
+                    name = "Alexis Harrington",
+                    type = Type.COMMERCIAL,
+                    imageUrl = "http://www.bing.com/search?q=error",
+                    description = "fames"
+                ),
             )
         )
     }
