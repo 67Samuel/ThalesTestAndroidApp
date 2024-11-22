@@ -18,8 +18,8 @@
             android:id="@+id/card_image"
             android:layout_width="0dp"
             android:layout_height="90dp"
-            app:srcCompat="@drawable/thales_image_1"
-            android:scaleType="fitCenter"
+            tools:src="@drawable/thales_image_placeholder"
+            android:scaleType="centerCrop"
             android:contentDescription="@string/product_image"
             android:background="@color/white"
             app:shapeAppearanceOverlay="@style/roundedImageView"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="Alexis Harrington"
+                tools:text="Alexis Harrington"
                 android:background="@color/md_theme_primaryContainer"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_marginTop="4dp" />
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="PERSONAL"
+                tools:text="PERSONAL"
                 android:textStyle="italic"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?android:attr/textColorSecondary"
@@ -70,7 +70,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:background="@color/md_theme_primaryContainer"
-                android:text="@string/lorem_ipsum"
+                tools:text="@string/lorem_ipsum"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?android:attr/textColorTertiary"/>
 

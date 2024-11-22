@@ -1,13 +1,14 @@
 <resources>
     <string name="app_name">ThalesTestAndroidApp</string>
-    <string name="error_request_timeout">Try again later</string>
-    <string name="error_too_many_requests">Try again later</string>
-    <string name="error_no_internet">Check your internet connection</string>
-    <string name="error_unknown">Try again later</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="products_list_title">Products</string>
     <string name="sort_icon">Sort</string>
     <string name="product_image">Product Image</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</string>
+    <string name="the_request_timed_out">Unable to get data, try again later</string>
+    <string name="youve_hit_your_rate_limit">Try again later</string>
+    <string name="no_internet">Check your internet connection</string>
+    <string name="server_error">Something went wrong</string>
+    <string name="client_error">Something went wrong</string>
+    <string name="error_serialization">Something went wrong</string>
+    <string name="unknown_error">Something went wrong</string>
 </resources>

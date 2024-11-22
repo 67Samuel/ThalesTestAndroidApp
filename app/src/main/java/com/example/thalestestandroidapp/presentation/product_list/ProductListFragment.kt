@@ -2,6 +2,7 @@ package com.example.thalestestandroidapp.presentation.product_list
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -12,11 +13,11 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductListBinding
 import com.example.thalestestandroidapp.domain.models.Product
-import com.example.thalestestandroidapp.presentation.utils.toMessage
 import com.google.android.flexbox.FlexboxLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
+@AndroidEntryPoint
 class ProductListFragment : Fragment(R.layout.fragment_product_list),
     ProductRecyclerViewAdapter.Interaction {
 
@@ -25,12 +26,16 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
 
     private lateinit var recyclerViewAdapter: ProductRecyclerViewAdapter
 
+    //region Lifecycle
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         subscribeObservers()
         initRecyclerView()
     }
+
+    //endregion
 
     private fun initRecyclerView() {
         recyclerViewAdapter = ProductRecyclerViewAdapter(this@ProductListFragment)
@@ -42,47 +47,62 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     }
 
     private fun subscribeObservers() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.productList.collect { list ->
-                    recyclerViewAdapter.submitList(list)
-                }
+        observerScope {
+            viewModel.productList.collect { list ->
+                recyclerViewAdapter.submitList(list)
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.productListEvents.collect { event ->
-                    when (event) {
-                        is ProductListEvents.Error -> {
-                            Timber.e(event.error.toMessage(requireContext()))
-                        }
-                        is ProductListEvents.NavigateToProductDetails -> {
-                            Navigation.findNavController(binding.root).navigate(
-                                ProductListFragmentDirections
-                                    .actionProductListFragmentToProductDetailFragment()
-                            )
-                        }
+        observerScope {
+            viewModel.productListEvents.collect { event ->
+                when (event) {
+                    is ProductListEvents.Error -> {
+                        Toast.makeText(
+                            requireContext(),
+                            event.error.asString(requireContext()),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    is ProductListEvents.NavigateToProductDetails -> {
+                        Navigation.findNavController(binding.root).navigate(
+                            ProductListFragmentDirections
+                                .actionProductListFragmentToProductDetailFragment()
+                        )
                     }
                 }
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isLoading.collect { isLoading ->
-                    binding.progressBar.visibility = if (isLoading) {
-                        View.VISIBLE
-                    } else {
-                        View.GONE
-                    }
+        observerScope {
+            viewModel.isLoading.collect { isLoading ->
+                binding.progressBar.visibility = if (isLoading) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
                 }
             }
         }
     }
+
+    //region Convenience Functions
+
+    private fun observerScope(action: suspend () -> Unit) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                action()
+            }
+        }
+    }
+
+    //endregion
+
+    //region Overrides
 
     override fun onItemSelected(position: Int, item: Product) {
         viewModel.onAction(ProductListAction.OnProductClick(item.id))
     }
+
+    //endregion
 }
 

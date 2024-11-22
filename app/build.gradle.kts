@@ -3,16 +3,17 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.navigation.safeargs.kotlin)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
     namespace = "com.example.thalestestandroidapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.thalestestandroidapp"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -21,7 +22,7 @@ android {
 
     buildTypes {
         debug {
-
+            buildConfigField("String", "BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io\"")
         }
         release {
             isMinifyEnabled = false
@@ -29,7 +30,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"http://127.0.0.1:8080/\"")
+            buildConfigField("String", "BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io\"")
         }
     }
     compileOptions {
@@ -91,6 +92,19 @@ dependencies {
     implementation(libs.moshi)
     ksp(libs.moshi.kotlin.codegen)
 
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // Coil
+    implementation(libs.coil.network.okhttp)
+    implementation(libs.coil)
+
     // Logging
     implementation(libs.timber)
+}
+
+// Invoke Hilt processors only when necessary
+hilt {
+    enableAggregatingTask = true
 }

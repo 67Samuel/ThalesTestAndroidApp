@@ -2,9 +2,11 @@ package com.example.thalestestandroidapp.presentation
 
 import android.app.Application
 import com.example.thalestestandroidapp.BuildConfig
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
 
+@HiltAndroidApp
 class BaseApplication: Application() {
 
     override fun onCreate() {

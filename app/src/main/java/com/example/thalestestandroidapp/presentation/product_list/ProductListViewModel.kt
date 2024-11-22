@@ -4,6 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thalestestandroidapp.domain.models.Product
 import com.example.thalestestandroidapp.domain.models.Type
+import com.example.thalestestandroidapp.domain.network.Repository
+import com.example.thalestestandroidapp.domain.util.NetworkError
+import com.example.thalestestandroidapp.domain.util.Result
+import com.example.thalestestandroidapp.presentation.utils.asUiText
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
@@ -14,8 +19,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
+import javax.inject.Inject
 
-class ProductListViewModel : ViewModel() {
+@HiltViewModel
+class ProductListViewModel @Inject constructor(
+    private val repository: Repository
+) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -48,150 +58,17 @@ class ProductListViewModel : ViewModel() {
         }
 
         withContext(IO) {
-            delay(2000)
-
-            _productList.update { listOf(
-                Product(
-                    id = 5080,
-                    name = "Blanca Bradley",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=tincidunt",
-                    description = "deserunt"
-                ),
-                Product(
-                    id = 3881,
-                    name = "Cleveland Baird",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=veniam",
-                    description = "eius"
-                ),
-                Product(
-                    id = 2081,
-                    name = "Cleo Craft",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=postea",
-                    description = "propriae"
-                ),
-                Product(
-                    id = 6185,
-                    name = "Marissa Bartlett",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=harum",
-                    description = "pri"
-                ),
-                Product(
-                    id = 5080,
-                    name = "Blanca Bradley",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=tincidunt",
-                    description = "deserunt"
-                ),
-                Product(
-                    id = 3881,
-                    name = "Cleveland Baird",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=veniam",
-                    description = "eius"
-                ),
-                Product(
-                    id = 2081,
-                    name = "Cleo Craft",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=postea",
-                    description = "propriae"
-                ),
-                Product(
-                    id = 6185,
-                    name = "Marissa Bartlett",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=harum",
-                    description = "pri"
-                ),
-                Product(
-                    id = 5080,
-                    name = "Blanca Bradley",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=tincidunt",
-                    description = "deserunt"
-                ),
-                Product(
-                    id = 3881,
-                    name = "Cleveland Baird",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=veniam",
-                    description = "eius"
-                ),
-                Product(
-                    id = 2081,
-                    name = "Cleo Craft",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=postea",
-                    description = "propriae"
-                ),
-                Product(
-                    id = 6185,
-                    name = "Marissa Bartlett",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=harum",
-                    description = "pri"
-                ),
-                Product(
-                    id = 5080,
-                    name = "Blanca Bradley",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=tincidunt",
-                    description = "deserunt"
-                ),
-                Product(
-                    id = 3881,
-                    name = "Cleveland Baird",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=veniam",
-                    description = "eius"
-                ),
-                Product(
-                    id = 2081,
-                    name = "Cleo Craft",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=postea",
-                    description = "propriae"
-                ),
-                Product(
-                    id = 6185,
-                    name = "Marissa Bartlett",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=harum",
-                    description = "pri"
-                ),
-                Product(
-                    id = 5080,
-                    name = "Blanca Bradley",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=tincidunt",
-                    description = "deserunt"
-                ),
-                Product(
-                    id = 3881,
-                    name = "Cleveland Baird",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=veniam",
-                    description = "eius"
-                ),
-                Product(
-                    id = 2081,
-                    name = "Cleo Craft",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://duckduckgo.com/?q=postea",
-                    description = "propriae"
-                ),
-                Product(
-                    id = 6185,
-                    name = "Marissa Bartlett",
-                    type = Type.PERSONAL,
-                    imageUrl = "https://www.google.com/#q=harum",
-                    description = "pri"
-                ),
-            ) }
+            when(val result = repository.getAllProducts()) {
+                is Result.Error -> when(result.error) {
+                    NetworkError.GeneralNetworkError.COROUTINE_CANCELLATION -> {
+                        Timber.d("test: coroutine cancelled")
+                    }
+                    else -> _productListEvents.send(ProductListEvents.Error(result.error.asUiText()))
+                }
+                is Result.Success -> {
+                    _productList.update { result.data }
+                }
+            }
 
             withContext(Main) {
                 _isLoading.update { false }
