@@ -2,6 +2,7 @@ package com.example.thalestestandroidapp.di
 
 import com.example.thalestestandroidapp.BuildConfig
 import com.example.thalestestandroidapp.data.network.ProductApi
+import com.example.thalestestandroidapp.data.network.ProductImageApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +23,18 @@ object AppModule {
     @Provides
     fun providesProductApi(client: OkHttpClient): ProductApi {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl(BuildConfig.PRODUCT_BASE_URL)
+            .client(client)
+            .addConverterFactory(MoshiConverterFactory.create()) // parses Json to Dto
+            .build()
+            .create()
+    }
+
+    @Singleton
+    @Provides
+    fun providesProductImageApi(client: OkHttpClient): ProductImageApi {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.PRODUCT_IMAGE_BASE_URL)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create()) // parses Json to Dto
             .build()
