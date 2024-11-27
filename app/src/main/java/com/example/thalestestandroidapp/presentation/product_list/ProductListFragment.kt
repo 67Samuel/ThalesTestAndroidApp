@@ -54,7 +54,7 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
         }
 
         observerScope {
-            viewModel.productListEvents.collect { event ->
+            viewModel.events.collect { event ->
                 when (event) {
                     is ProductListEvents.Error -> {
                         Toast.makeText(
@@ -67,7 +67,9 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
                     is ProductListEvents.NavigateToProductDetails -> {
                         Navigation.findNavController(binding.root).navigate(
                             ProductListFragmentDirections
-                                .actionProductListFragmentToProductDetailFragment()
+                                .actionProductListFragmentToProductDetailFragment(
+                                    product = event.product
+                                )
                         )
                     }
                 }
@@ -100,7 +102,7 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     //region Overrides
 
     override fun onItemSelected(position: Int, item: Product) {
-        viewModel.onAction(ProductListAction.OnProductClick(item.id))
+        viewModel.onAction(ProductListAction.OnProductClick(item))
     }
 
     //endregion

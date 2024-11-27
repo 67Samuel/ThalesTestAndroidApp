@@ -74,7 +74,6 @@ class ProductRecyclerViewAdapter(private val interaction: Interaction? = null) :
             itemView.findViewById<TextView>(R.id.card_description).text = item.description
             itemView.findViewById<ImageView>(R.id.card_image).load(item.imageUrl) {
                 crossfade(true)
-                placeholder(R.drawable.thales_image_placeholder)
                 error(R.drawable.thales_image_placeholder)
             }
 

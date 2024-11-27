@@ -3,7 +3,6 @@ package com.example.thalestestandroidapp.presentation.product_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thalestestandroidapp.domain.models.Product
-import com.example.thalestestandroidapp.domain.models.Type
 import com.example.thalestestandroidapp.domain.network.Repository
 import com.example.thalestestandroidapp.domain.util.NetworkError
 import com.example.thalestestandroidapp.domain.util.Result
@@ -12,7 +11,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -34,7 +32,7 @@ class ProductListViewModel @Inject constructor(
     val productList = _productList.asStateFlow()
 
     private val _productListEvents = Channel<ProductListEvents>()
-    val productListEvents = _productListEvents.receiveAsFlow()
+    val events = _productListEvents.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -46,7 +44,9 @@ class ProductListViewModel @Inject constructor(
         when (action) {
             is ProductListAction.OnProductClick -> {
                 viewModelScope.launch {
-                    _productListEvents.send(ProductListEvents.NavigateToProductDetails)
+                    _productListEvents.send(
+                        ProductListEvents.NavigateToProductDetails(action.product)
+                    )
                 }
             }
         }

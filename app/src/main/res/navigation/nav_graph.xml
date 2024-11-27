@@ -22,5 +22,9 @@
         android:id="@+id/productDetailFragment"
         android:name="com.example.thalestestandroidapp.presentation.product_detail.ProductDetailFragment"
         android:label="fragment_product_detail"
-        tools:layout="@layout/fragment_product_detail" />
+        tools:layout="@layout/fragment_product_detail" >
+        <argument
+            android:name="product"
+            app:argType="com.example.thalestestandroidapp.domain.models.Product" />
+    </fragment>
 </navigation>

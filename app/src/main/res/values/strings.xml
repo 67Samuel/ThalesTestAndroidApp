@@ -11,4 +11,13 @@
     <string name="client_error">Something went wrong</string>
     <string name="error_serialization">Something went wrong</string>
     <string name="unknown_error">Something went wrong</string>
+    <string name="product_name">Product Name</string>
+    <string name="name">Name</string>
+    <string name="type">Type</string>
+    <string name="new_type">New Type</string>
+    <string name="edit_product">Edit Product</string>
+    <string name="confirm_changes">Confirm Changes</string>
+    <string name="field_cannot_be_empty">Field cannot be empty</string>
+    <string name="product_description">Product Description</string>
+    <string name="product_type">Product Type</string>
 </resources>

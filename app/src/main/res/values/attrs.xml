@@ -3,4 +3,8 @@
     <attr name="colorOnCustomColor1" format="color" />
     <attr name="colorCustomColor1Container" format="color" />
     <attr name="colorOnCustomColor1Container" format="color" />
+
+    <declare-styleable name="ForegroundImageView">
+        <attr name="android:foreground"/>
+    </declare-styleable>
 </resources>

@@ -21,7 +21,6 @@
             tools:src="@drawable/thales_image_placeholder"
             android:scaleType="centerCrop"
             android:contentDescription="@string/product_image"
-            android:background="@color/white"
             app:shapeAppearanceOverlay="@style/roundedImageView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
