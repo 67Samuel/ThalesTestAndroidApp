@@ -31,8 +31,7 @@ interface ProductApi {
     @PUT("/product/{id}")
     suspend fun putProduct(
         @Path("id") id: Int,
-        @Body name: String,
-        @Body imageData: String,
+        @Body product: Product
     ): ProductDto
 
     @DELETE("product/{id}")

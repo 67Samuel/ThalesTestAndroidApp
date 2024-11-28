@@ -13,7 +13,10 @@ sealed interface ProductDetailAction {
         val type: Type? = null
     ): ProductDetailAction
 
+    /**
+     * Null if a new Product is to be created
+     */
     data class OnProductReceived(
-        val product: Product
+        val product: Product? = null
     ): ProductDetailAction
 }

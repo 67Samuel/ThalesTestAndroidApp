@@ -24,7 +24,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "PRODUCT_BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io\"")
-            buildConfigField("String", "PRODUCT_IMAGE_BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io/image\"")
+            buildConfigField("String", "PRODUCT_IMAGE_BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io/image/\"")
         }
         release {
             isMinifyEnabled = false
@@ -32,8 +32,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io\"")
-            buildConfigField("String", "PRODUCT_IMAGE_BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io/image\"")
+            buildConfigField("String", "PRODUCT_BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io\"")
+            buildConfigField("String", "PRODUCT_IMAGE_BASE_URL", "\"https://673f398fa9bc276ec4b7b67c.mockapi.io/image/\"")
         }
     }
     compileOptions {

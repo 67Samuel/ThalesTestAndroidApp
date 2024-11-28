@@ -17,6 +17,9 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"/>
+        <action
+            android:id="@+id/action_productListFragment_to_productDetailFragment2"
+            app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
@@ -25,6 +28,8 @@
         tools:layout="@layout/fragment_product_detail" >
         <argument
             android:name="product"
-            app:argType="com.example.thalestestandroidapp.domain.models.Product" />
+            app:argType="com.example.thalestestandroidapp.domain.models.Product"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

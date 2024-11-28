@@ -3,12 +3,9 @@ package com.example.thalestestandroidapp.presentation.product_detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thalestestandroidapp.domain.models.Product
-import com.example.thalestestandroidapp.domain.models.Type
 import com.example.thalestestandroidapp.domain.network.Repository
 import com.example.thalestestandroidapp.domain.util.NetworkError
 import com.example.thalestestandroidapp.domain.util.Result
-import com.example.thalestestandroidapp.presentation.product_list.ProductListAction
-import com.example.thalestestandroidapp.presentation.product_list.ProductListEvents
 import com.example.thalestestandroidapp.presentation.utils.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -31,7 +28,7 @@ class ProductDetailViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    private val _product = MutableStateFlow(Product.EMPTY)
+    private val _product = MutableStateFlow<Product?>(null)
     val product = _product.asStateFlow()
 
     private val _productDetailEvents = Channel<ProductDetailEvents>()
@@ -41,7 +38,7 @@ class ProductDetailViewModel @Inject constructor(
         when (action) {
             is ProductDetailAction.OnConfirmProductUpdate -> {
                 viewModelScope.launch {
-                    updateProduct()
+//                    createProduct()
                 }
             }
 
@@ -53,7 +50,7 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateProduct(product: Product) {
+    private suspend fun createProduct(product: Product) {
         withContext(Main) {
             _isLoading.update { true }
         }

@@ -34,8 +34,8 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun putProduct(product: Product): Result<Product, NetworkError> = try {
-        val postedProduct = productApi.putProduct(id = product.id, product = product)
-        Result.Success(postedProduct.toProduct())
+        val updatedProductDto = productApi.putProduct(id = product.id, product = product)
+        Result.Success(updatedProductDto.toProduct())
     } catch (e: Exception) {
         e.toNetworkErrorResult()
     }
