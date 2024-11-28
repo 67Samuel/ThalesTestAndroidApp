@@ -9,13 +9,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductListBinding
 import com.example.thalestestandroidapp.domain.models.Product
+import com.example.thalestestandroidapp.presentation.product_detail.ProductDetailFragmentArgs
+import com.example.thalestestandroidapp.presentation.utils.observerScope
 import com.google.android.flexbox.FlexboxLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment(R.layout.fragment_product_list),
@@ -24,12 +28,16 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     private val binding by viewBinding(FragmentProductListBinding::bind)
     private val viewModel: ProductListViewModel by activityViewModels()
 
+    private val args by navArgs<ProductListFragmentArgs>()
+
     private lateinit var recyclerViewAdapter: ProductRecyclerViewAdapter
 
     //region Lifecycle
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Timber.d("test: product=${args.updatedOrCreatedProduct}")
 
         subscribeObservers()
         initRecyclerView()
@@ -86,18 +94,6 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
             }
         }
     }
-
-    //region Convenience Functions
-
-    private fun observerScope(action: suspend () -> Unit) {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                action()
-            }
-        }
-    }
-
-    //endregion
 
     //region Overrides
 

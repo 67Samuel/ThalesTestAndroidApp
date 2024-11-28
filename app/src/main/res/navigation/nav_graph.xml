@@ -13,13 +13,15 @@
         <action
             android:id="@+id/action_productListFragment_to_productDetailFragment"
             app:destination="@id/productDetailFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"/>
-        <action
-            android:id="@+id/action_productListFragment_to_productDetailFragment2"
-            app:destination="@id/productDetailFragment" />
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <argument
+            android:name="updatedOrCreatedProduct"
+            app:argType="com.example.thalestestandroidapp.domain.models.Product"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
@@ -31,5 +33,14 @@
             app:argType="com.example.thalestestandroidapp.domain.models.Product"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_productDetailFragment_to_productListFragment"
+            app:destination="@id/productListFragment"
+            app:popUpTo="@+id/nav_host_fragment"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
     </fragment>
 </navigation>

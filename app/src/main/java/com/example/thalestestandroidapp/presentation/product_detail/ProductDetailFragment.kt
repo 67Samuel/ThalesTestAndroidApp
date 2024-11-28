@@ -3,20 +3,26 @@ package com.example.thalestestandroidapp.presentation.product_detail
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductDetailBinding
+import com.example.thalestestandroidapp.presentation.utils.observerScope
+import com.example.thalestestandroidapp.presentation.utils.toFile
 import com.example.thalestestandroidapp.presentation.utils.toType
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import java.io.File
 
 /**
  * Handles the cases where the user is viewing/updating an existing Product or creating a new one
@@ -29,10 +35,25 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
 
     private val args by navArgs<ProductDetailFragmentArgs>()
 
+    private val pickImageResultLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let {
+                binding.detailImage.loadProductImage(uri)
+                imageChanged = true
+                handleButtonEnableSetting()
+
+                uri.toFile(requireContext())?.let {
+                    currentImageFile = it
+                }
+            }
+        }
+
     private var nameChanged = false
     private var imageChanged = false
     private var typeChanged = false
     private var descChanged = false
+
+    private var currentImageFile: File? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,8 +87,11 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                         error(R.drawable.cannot_load_image)
                     }
                     setOnClickListener {
-                        // Let user choose a photo
-                        // Send image as File to the ViewModel
+                        pickImageResultLauncher.launch(
+                            PickVisualMediaRequest.Builder().setMediaType(
+                                ImageOnly
+                            ).build()
+                        )
                     }
                 }
                 detailName.editText?.let {
@@ -92,28 +116,110 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                     }
                 }
                 confirmButton.setOnClickListener {
-                    viewModel.onAction(ProductDetailAction.OnConfirmProductUpdate(
-                        name = detailNameEditText.text.toString(),
-                        image = null, // TODO: Pass image data
-                        description = detailDescriptionEditText.text.toString(),
-                        type = detailTypeDropdownLayout.text.toString().toType()
-                    ))
+                    viewModel.apply {
+                        if (isUpdatingProduct) {
+                            onAction(
+                                ProductDetailAction.UpdateProduct(
+                                    id = productToUpdate.id,
+                                    name = detailNameEditText.text.toString(),
+                                    image = currentImageFile,
+                                    description = detailDescriptionEditText.text.toString(),
+                                    type = detailTypeDropdownLayout.text.toString().toType()
+                                )
+                            )
+                        } else {
+                            detailTypeDropdownLayout.text.toString().toType()?.let {
+                                onAction(
+                                    ProductDetailAction.CreateProduct(
+                                        name = detailNameEditText.text.toString(),
+                                        description = detailDescriptionEditText.text.toString(),
+                                        type = it
+                                    )
+                                )
+                            } ?: run {
+                                detailDescriptionEditText.text = null
+                                typeChanged = false
+                                // TODO: Tell user that the Type field is invalid
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
     private fun subscribeObservers() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isLoading.collect { isLoading ->
-                    binding.progressBar.visibility = if (isLoading) {
-                        View.VISIBLE
-                    } else {
-                        View.GONE
+        observerScope {
+            viewModel.isLoading.collect { isLoading ->
+                binding.progressBar.visibility = if (isLoading) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            }
+        }
+
+        observerScope {
+            viewModel.product.collect { product ->
+                product?.let {
+                    binding.apply {
+                        detailImage.loadProductImage(it.imageUrl)
+                        detailName.editText?.setText(it.name)
+                        detailType.editText?.setText(it.type.name)
+                        detailDescription.editText?.setText(it.description)
                     }
                 }
             }
+        }
+
+        observerScope {
+            viewModel.events.collect { event ->
+                when (event) {
+                    is ProductDetailEvents.Error -> {
+                        Toast.makeText(
+                            requireContext(),
+                            event.error.asString(requireContext()),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    is ProductDetailEvents.ProductUpdated -> {
+                        Toast.makeText(
+                            requireContext(),
+                            event.message.asString(requireContext()),
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        Navigation.findNavController(binding.root).navigate(
+                            ProductDetailFragmentDirections.actionProductDetailFragmentToProductListFragment(
+                                updatedOrCreatedProduct = viewModel.product.value
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun ImageView.loadProductImage(imageUrl: Any?) {
+        load(imageUrl) {
+            crossfade(true)
+            error(R.drawable.cannot_load_image)
+            listener(
+                onError = { _, _ ->
+                    imageTintList = ContextCompat.getColorStateList(
+                        requireContext(),
+                        R.color.md_theme_onPrimaryContainer
+                    )
+                    background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.color.md_theme_inversePrimary_highContrast
+                    )
+                },
+                onSuccess = { _, _ ->
+                    imageTintList = null
+                }
+            )
         }
     }
 

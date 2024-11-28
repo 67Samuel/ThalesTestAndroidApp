@@ -3,6 +3,7 @@ package com.example.thalestestandroidapp.domain.models
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+
 @Parcelize
 data class Product(
     val id: Int,
@@ -12,14 +13,15 @@ data class Product(
     val description: String
 ): Parcelable {
     companion object {
-        val EMPTY: Product
-            get() = Product(
-                id = 0,
-                name = "",
-                type = Type.PERSONAL,
+        fun updatableProduct(name: String, description: String, type: Type): Product {
+            return Product(
+                id = -1,
+                name = name,
+                type = type,
                 imageUrl = "",
-                description = ""
+                description = description
             )
+        }
     }
 }
 

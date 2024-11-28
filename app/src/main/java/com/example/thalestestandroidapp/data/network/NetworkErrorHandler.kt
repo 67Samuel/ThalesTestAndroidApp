@@ -7,11 +7,13 @@ import com.example.thalestestandroidapp.domain.util.Result
 import com.squareup.moshi.JsonEncodingException
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
 import java.net.SocketTimeoutException
 import kotlin.coroutines.cancellation.CancellationException
 
 fun Exception.toNetworkErrorResult(): Result.Error<NetworkError> {
+    Timber.e(this)
     /**
      * Make sure that the Exceptions are in order of specificity
      */

@@ -6,11 +6,18 @@ import java.io.File
 
 sealed interface ProductDetailAction {
 
-    data class OnConfirmProductUpdate(
+    data class UpdateProduct(
+        val id: Int, // If id is null, we are trying to create a new product
         val name: String? = null,
         val image: File? = null,
         val description: String? = null,
         val type: Type? = null
+    ): ProductDetailAction
+
+    data class CreateProduct(
+        val name: String,
+        val description: String,
+        val type: Type
     ): ProductDetailAction
 
     /**

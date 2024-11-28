@@ -1,7 +1,9 @@
 package com.example.thalestestandroidapp.data.network
 
 import com.example.thalestestandroidapp.data.mappers.toProduct
+import com.example.thalestestandroidapp.data.network.dtos.ProductDto
 import com.example.thalestestandroidapp.domain.models.Product
+import com.example.thalestestandroidapp.domain.models.Type
 import com.example.thalestestandroidapp.domain.network.Repository
 import com.example.thalestestandroidapp.domain.util.EmptyResult
 import com.example.thalestestandroidapp.domain.util.NetworkError
@@ -18,41 +20,72 @@ class ProductRepositoryImpl @Inject constructor(
     private val productImageApi: ProductImageApi,
 ) : Repository {
     override suspend fun getAllProducts(): Result<List<Product>, NetworkError> = try {
-        Timber.d("test: called")
         val products = productApi.getAllProducts()
-        Timber.d("test: products=${products.take(10)}")
         Result.Success(products.map { it.toProduct() })
     } catch (e: Exception) {
         e.toNetworkErrorResult()
     }
 
-    override suspend fun postProduct(product: Product): Result<Product, NetworkError> = try {
-        val postedProduct = productApi.postProduct(product = product)
+    override suspend fun postProduct(
+        name: String,
+        description: String,
+        type: Type
+    ): Result<Product, NetworkError> = try {
+        val postedProduct = productApi.postProduct(
+            name = name,
+            description = description,
+            type = type
+        )
         Result.Success(postedProduct.toProduct())
     } catch (e: Exception) {
         e.toNetworkErrorResult()
     }
 
-    override suspend fun putProduct(product: Product): Result<Product, NetworkError> = try {
-        val updatedProductDto = productApi.putProduct(id = product.id, product = product)
+    override suspend fun updateProduct(
+        id: Int,
+        name: String,
+        imageUrl: String,
+        description: String,
+        type: Type
+    ): Result<Product, NetworkError> = try {
+        val updatedProductDto = productApi.updateProduct(
+            id = id,
+            updatableProduct = ProductDto.updatableProduct(
+                name = name,
+                description = description,
+                imageUrl = imageUrl,
+                type = type
+            )
+        )
         Result.Success(updatedProductDto.toProduct())
     } catch (e: Exception) {
         e.toNetworkErrorResult()
     }
 
-    override suspend fun replaceProductImage(id: Int, imageFile: File): EmptyResult<NetworkError> = try {
-        productImageApi.replaceProductImage(
-            productId = id,
-            image = MultipartBody.Part.createFormData(
-                name = "image",
-                filename = imageFile.name,
-                body = imageFile.asRequestBody()
+    override suspend fun replaceProductImage(
+        id: Int,
+        imageFile: File
+    ): Result<String, NetworkError> =
+        try {
+            val imageUrl = productImageApi.replaceProductImage(
+                productId = id,
+                image = MultipartBody.Part.createFormData(
+                    name = "image",
+                    filename = imageFile.name,
+                    body = imageFile.asRequestBody()
+                )
             )
-        )
-        Result.Success(Unit).asEmptyDataResult()
-    } catch (e: Exception) {
-        e.toNetworkErrorResult()
-    }
+            Result.Success(imageUrl)
+        } catch (e: Exception) {
+            // The API endpoint for this example project does not accept multipart form data or very
+            // large data packets, so it will return a HTTP 400 status code
+            if (e is retrofit2.HttpException && (e.code() == 503 || e.code() == 400)) {
+                // return a fake image
+                Result.Success("https://www.sandstonecastles.co.uk/wp-content/uploads/2022/12/what-does-success-mean-to-you.jpg")
+            } else {
+                e.toNetworkErrorResult()
+            }
+        }
 
     override suspend fun deleteProduct(id: Int): EmptyResult<NetworkError> = try {
         productApi.deleteProduct(id)

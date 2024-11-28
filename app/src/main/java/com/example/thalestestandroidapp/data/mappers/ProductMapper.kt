@@ -13,7 +13,11 @@ fun ProductDto.toProduct(): Product {
          * pretend that it actually returns something that can be converted to one of the 3 types
          * I have specified in this app.
          */
-        type = Type.entries.random(),
+        type = try {
+            Type.valueOf(type)
+        } catch (_: IllegalArgumentException) {
+            Type.entries.random()
+        },
         imageUrl = imageUrl,
         description = description
     )
