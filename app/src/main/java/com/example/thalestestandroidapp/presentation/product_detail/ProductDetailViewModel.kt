@@ -44,10 +44,10 @@ class ProductDetailViewModel @Inject constructor(
         when (action) {
             is ProductDetailAction.UpdateProduct -> {
                 viewModelScope.launch {
-                    updateProduct(
+                    replaceImageAndUpdateProduct(
                         id = action.id,
                         name = action.name,
-                        image = action.image,
+                        imageFile = action.image,
                         description = action.description,
                         type = action.type
                     )
@@ -56,8 +56,9 @@ class ProductDetailViewModel @Inject constructor(
 
             is ProductDetailAction.CreateProduct -> {
                 viewModelScope.launch {
-                    createProduct(
+                    createImageAndCreateProduct(
                         name = action.name,
+                        imageFile = action.imageFile,
                         description = action.description,
                         type = action.type
                     )
@@ -72,10 +73,10 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateProduct(
+    private suspend fun replaceImageAndUpdateProduct(
         id: Int,
         name: String? = null,
-        image: File? = null,
+        imageFile: File? = null,
         description: String? = null,
         type: Type? = null
     ) {
@@ -84,10 +85,10 @@ class ProductDetailViewModel @Inject constructor(
         }
 
         withContext(IO) {
-            if (image != null) {
+            if (imageFile != null) {
                 when (val replaceProductImageResult = repository.replaceProductImage(
                     id = id,
-                    imageFile = image
+                    imageFile = imageFile
                 )) {
                     is Result.Error -> {
                         when (replaceProductImageResult.error) {
@@ -113,7 +114,7 @@ class ProductDetailViewModel @Inject constructor(
                         // Product DB will be updated at this point
                         updateProduct(
                             name = name,
-                            imageUrl = replaceProductImageResult.data, // The new url that the backend created
+                            imageUrl = replaceProductImageResult.data, // The new url that the backend returned
                             description = description,
                             type = type
                         )
@@ -180,32 +181,91 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun createProduct(name: String, description: String, type: Type) {
+    private suspend fun createImageAndCreateProduct(
+        name: String,
+        imageFile: File,
+        description: String,
+        type: Type
+    ) {
         withContext(Main) {
             _isLoading.update { true }
         }
 
         withContext(IO) {
-            when (val result = repository.postProduct(
-                name = name,
-                description = description,
-                type = type
+            when (val createProductImageResult = repository.createProductImage(
+                imageFile = imageFile
             )) {
-                is Result.Error -> when (result.error) {
+                is Result.Error -> {
+                    when (createProductImageResult.error) {
+                        NetworkError.GeneralNetworkError.COROUTINE_CANCELLATION -> {
+                            Timber.d("test: coroutine cancelled")
+                        }
+
+                        else -> {
+                            _productDetailEvents.send(
+                                ProductDetailEvents.Error(
+                                    createProductImageResult.error.asUiText()
+                                )
+                            )
+                        }
+                    }
+
+                    withContext(Main) {
+                        _isLoading.update { false }
+                    }
+                }
+
+                is Result.Success -> {
+                    // Product DB will be updated at this point
+                    createProduct(
+                        name = name,
+                        imageUrl = createProductImageResult.data, // The new url that the backend created
+                        description = description,
+                        type = type
+                    )
+
+                    withContext(Main) {
+                        _isLoading.update { false }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun createProduct(
+        name: String,
+        imageUrl: String,
+        description: String,
+        type: Type
+    ) {
+        withContext(IO) {
+            when (val createProductResult = repository.createProduct(
+                name = name, imageUrl = imageUrl, description = description, type = type
+
+            )) {
+                is Result.Error -> when (createProductResult.error) {
                     NetworkError.GeneralNetworkError.COROUTINE_CANCELLATION -> {
                         Timber.d("test: coroutine cancelled")
                     }
 
-                    else -> _productDetailEvents.send(ProductDetailEvents.Error(result.error.asUiText()))
+                    else -> {
+                        _productDetailEvents.send(
+                            ProductDetailEvents.Error(
+                                createProductResult.error.asUiText()
+                            )
+                        )
+                    }
                 }
 
                 is Result.Success -> {
-                    _product.update { result.data }
+                    Timber.d("test: createProductResult.data=${createProductResult.data}")
+                    _product.update { createProductResult.data }
+                    _productDetailEvents.send(
+                        ProductDetailEvents.ProductUpdated(
+                            UiText.StringResource(R.string.product_created)
+                        )
+                    )
                 }
-            }
-
-            withContext(Main) {
-                _isLoading.update { false }
             }
         }
     }

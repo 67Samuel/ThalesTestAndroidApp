@@ -22,3 +22,13 @@ fun ProductDto.toProduct(): Product {
         description = description
     )
 }
+
+fun Product.toProductDto(): ProductDto {
+    return ProductDto(
+        id = id,
+        name = name,
+        type = type.toString(),
+        imageUrl = imageUrl,
+        description = description
+    )
+}

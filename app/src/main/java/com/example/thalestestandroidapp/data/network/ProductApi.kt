@@ -1,15 +1,12 @@
 package com.example.thalestestandroidapp.data.network
 
 import com.example.thalestestandroidapp.data.network.dtos.ProductDto
-import com.example.thalestestandroidapp.domain.models.Product
-import com.example.thalestestandroidapp.domain.models.Type
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import java.io.File
 
 interface ProductApi {
 
@@ -24,9 +21,7 @@ interface ProductApi {
      */
     @POST(".")
     suspend fun postProduct(
-        @Body name: String,
-        @Body description: String,
-        @Body type: Type
+        @Body product: ProductDto
     ): ProductDto
 
     /**

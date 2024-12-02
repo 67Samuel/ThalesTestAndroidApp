@@ -11,7 +11,6 @@ import com.example.thalestestandroidapp.domain.util.Result
 import com.example.thalestestandroidapp.domain.util.asEmptyDataResult
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -26,15 +25,19 @@ class ProductRepositoryImpl @Inject constructor(
         e.toNetworkErrorResult()
     }
 
-    override suspend fun postProduct(
+    override suspend fun createProduct(
         name: String,
+        imageUrl: String,
         description: String,
         type: Type
     ): Result<Product, NetworkError> = try {
         val postedProduct = productApi.postProduct(
-            name = name,
-            description = description,
-            type = type
+            product = ProductDto.productDtoForCreation(
+                name = name,
+                imageUrl = imageUrl,
+                description = description,
+                type = type
+            )
         )
         Result.Success(postedProduct.toProduct())
     } catch (e: Exception) {
@@ -50,11 +53,12 @@ class ProductRepositoryImpl @Inject constructor(
     ): Result<Product, NetworkError> = try {
         val updatedProductDto = productApi.updateProduct(
             id = id,
-            updatableProduct = ProductDto.updatableProduct(
+            updatableProduct = ProductDto(
+                id = id,
                 name = name,
-                description = description,
+                type = type.toString(),
                 imageUrl = imageUrl,
-                type = type
+                description = description
             )
         )
         Result.Success(updatedProductDto.toProduct())
@@ -67,7 +71,7 @@ class ProductRepositoryImpl @Inject constructor(
         imageFile: File
     ): Result<String, NetworkError> =
         try {
-            val imageUrl = productImageApi.replaceProductImage(
+            val imageUrl = productImageApi.putProductImage(
                 productId = id,
                 image = MultipartBody.Part.createFormData(
                     name = "image",
@@ -80,12 +84,32 @@ class ProductRepositoryImpl @Inject constructor(
             // The API endpoint for this example project does not accept multipart form data or very
             // large data packets, so it will return a HTTP 400 status code
             if (e is retrofit2.HttpException && (e.code() == 503 || e.code() == 400)) {
-                // return a fake image
+                // Return a fake image
                 Result.Success("https://www.sandstonecastles.co.uk/wp-content/uploads/2022/12/what-does-success-mean-to-you.jpg")
             } else {
                 e.toNetworkErrorResult()
             }
         }
+
+    override suspend fun createProductImage(imageFile: File): Result<String, NetworkError> = try {
+        val imageUrl = productImageApi.postProductImage(
+            image = MultipartBody.Part.createFormData(
+                name = "image",
+                filename = imageFile.name,
+                body = imageFile.asRequestBody()
+            )
+        )
+        Result.Success(imageUrl)
+    } catch (e: Exception) {
+        // The API endpoint for this example project does not accept multipart form data or very
+        // large data packets, so it will return a HTTP 400 status code
+        if (e is retrofit2.HttpException && (e.code() == 503 || e.code() == 400)) {
+            // Return a fake image
+            Result.Success("https://www.sandstonecastles.co.uk/wp-content/uploads/2022/12/what-does-success-mean-to-you.jpg")
+        } else {
+            e.toNetworkErrorResult()
+        }
+    }
 
     override suspend fun deleteProduct(id: Int): EmptyResult<NetworkError> = try {
         productApi.deleteProduct(id)

@@ -1,21 +1,29 @@
 package com.example.thalestestandroidapp.data.network
 
-import com.example.thalestestandroidapp.domain.util.NetworkError
-import com.example.thalestestandroidapp.domain.util.Result
 import okhttp3.MultipartBody
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ProductImageApi {
     /**
-     * Uploads a product image to the server, which will then host it in a
+     * Replaces the image in the server, and returns the URL.
      */
-    @POST("{id}")
+    @PUT("{id}")
     @Multipart
-    suspend fun replaceProductImage(
+    suspend fun putProductImage(
         @Path("id") productId: Int,
+        @Part image: MultipartBody.Part
+    ): String
+
+    /**
+     * Uploads a product image to the server, which will then host it in a database, create a URL for it, and return that URL.
+     */
+    @POST(".")
+    @Multipart
+    suspend fun postProductImage(
         @Part image: MultipartBody.Part
     ): String
 }

@@ -10,8 +10,9 @@ import java.io.File
 interface Repository {
     suspend fun getAllProducts(): Result<List<Product>, NetworkError>
 
-    suspend fun postProduct(
+    suspend fun createProduct(
         name: String,
+        imageUrl: String,
         description: String,
         type: Type
     ): Result<Product, NetworkError>
@@ -26,6 +27,10 @@ interface Repository {
 
     suspend fun replaceProductImage(
         id: Int,
+        imageFile: File
+    ): Result<String, NetworkError>
+
+    suspend fun createProductImage(
         imageFile: File
     ): Result<String, NetworkError>
 

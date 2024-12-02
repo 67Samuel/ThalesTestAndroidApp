@@ -2,6 +2,7 @@ package com.example.thalestestandroidapp.domain.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.io.File
 
 
 @Parcelize
@@ -13,7 +14,7 @@ data class Product(
     val description: String
 ): Parcelable {
     companion object {
-        fun updatableProduct(name: String, description: String, type: Type): Product {
+        fun newProduct(name: String, imageFile: File, description: String, type: Type): Product {
             return Product(
                 id = -1,
                 name = name,

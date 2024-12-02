@@ -18,6 +18,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductDetailBinding
+import com.example.thalestestandroidapp.presentation.utils.ifLet
+import com.example.thalestestandroidapp.presentation.utils.let2
 import com.example.thalestestandroidapp.presentation.utils.observerScope
 import com.example.thalestestandroidapp.presentation.utils.toFile
 import com.example.thalestestandroidapp.presentation.utils.toType
@@ -128,18 +130,26 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                                 )
                             )
                         } else {
-                            detailTypeDropdownLayout.text.toString().toType()?.let {
-                                onAction(
-                                    ProductDetailAction.CreateProduct(
-                                        name = detailNameEditText.text.toString(),
-                                        description = detailDescriptionEditText.text.toString(),
-                                        type = it
-                                    )
-                                )
-                            } ?: run {
+                            if (detailTypeDropdownLayout.text.toString().toType() == null) {
                                 detailDescriptionEditText.text = null
                                 typeChanged = false
                                 // TODO: Tell user that the Type field is invalid
+                            } else if (currentImageFile == null) {
+                                // TODO: Tell user that there needs to be an image
+                            } else {
+                                let2(
+                                    detailTypeDropdownLayout.text.toString().toType(),
+                                    currentImageFile
+                                ) { type, imageFile ->
+                                    onAction(
+                                        ProductDetailAction.CreateProduct(
+                                            name = detailNameEditText.text.toString(),
+                                            imageFile = imageFile,
+                                            description = detailDescriptionEditText.text.toString(),
+                                            type = type
+                                        )
+                                    )
+                                }
                             }
                         }
                     }

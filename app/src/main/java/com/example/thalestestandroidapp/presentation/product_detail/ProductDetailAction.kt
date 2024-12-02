@@ -16,6 +16,7 @@ sealed interface ProductDetailAction {
 
     data class CreateProduct(
         val name: String,
+        val imageFile: File,
         val description: String,
         val type: Type
     ): ProductDetailAction

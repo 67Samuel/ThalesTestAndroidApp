@@ -1,7 +1,6 @@
 package com.example.thalestestandroidapp.data.network.dtos
 
 import androidx.annotation.Keep
-import com.example.thalestestandroidapp.domain.models.Product
 import com.example.thalestestandroidapp.domain.models.Type
 import com.squareup.moshi.JsonClass
 
@@ -15,7 +14,7 @@ data class ProductDto(
     val description: String
 ) {
     companion object {
-        fun updatableProduct(name: String, imageUrl: String, description: String, type: Type): ProductDto {
+        fun productDtoForCreation(name: String, imageUrl: String, description: String, type: Type): ProductDto {
             return ProductDto(
                 id = -1,
                 name = name,

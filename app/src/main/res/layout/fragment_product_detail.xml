@@ -118,18 +118,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/detail_type"/>
 
-<!--            <Button-->
-<!--                style="@style/Widget.AppCompat.Button"-->
-<!--                android:id="@+id/confirm_button"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/confirm_changes"-->
-<!--                android:layout_margin="32dp"-->
-<!--                android:enabled="false"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/detail_type"/>-->
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>

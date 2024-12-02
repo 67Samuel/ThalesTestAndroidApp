@@ -22,4 +22,7 @@
     <string name="product_type">Product Type</string>
     <string name="create_product">Create Product</string>
     <string name="product_updated">Product updated successfully!</string>
+    <string name="product_created">Product created successfully</string>
+    <string name="create_a_new_product">Create a new Product</string>
+    <string name="add_product">Add Product</string>
 </resources>
