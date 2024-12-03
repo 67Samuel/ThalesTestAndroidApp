@@ -18,13 +18,14 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductDetailBinding
-import com.example.thalestestandroidapp.presentation.utils.ifLet
 import com.example.thalestestandroidapp.presentation.utils.let2
+import com.example.thalestestandroidapp.presentation.utils.let5
 import com.example.thalestestandroidapp.presentation.utils.observerScope
 import com.example.thalestestandroidapp.presentation.utils.toFile
 import com.example.thalestestandroidapp.presentation.utils.toFormattedPrice
 import com.example.thalestestandroidapp.presentation.utils.toType
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.io.File
 
 /**
@@ -42,7 +43,7 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let {
                 binding.detailImage.loadProductImage(uri)
-                imageChanged = true
+                validImageChange = true
                 handleButtonEnableSetting()
 
                 uri.toFile(requireContext())?.let {
@@ -51,11 +52,11 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
             }
         }
 
-    private var nameChanged = false
-    private var imageChanged = false
-    private var typeChanged = false
-    private var descChanged = false
-    private var priceChanged = false
+    private var validNameChange = false
+    private var validImageChange = false
+    private var validTypeChange = false
+    private var validDescChange = false
+    private var validPriceChange = false
 
     private var currentImageFile: File? = null
 
@@ -69,7 +70,12 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     }
 
     private fun handleButtonEnableSetting() {
-        binding.confirmButton.isEnabled = nameChanged || imageChanged || descChanged || typeChanged || priceChanged
+        binding.confirmButton.isEnabled = if (viewModel.isUpdatingProduct) {
+            validNameChange || validImageChange || validDescChange || validTypeChange || validPriceChange
+        } else {
+            validNameChange && validImageChange && validDescChange && validTypeChange && validPriceChange
+        }
+
     }
 
     override fun onResume() {
@@ -82,56 +88,60 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     }
 
     private fun initViews() {
-        args.product?.let { productToUpdate ->
-            binding.apply {
-                title.text = getString(R.string.edit_product)
-                detailImage.apply {
-                    load(productToUpdate.imageUrl) {
-                        crossfade(true)
-                        error(R.drawable.cannot_load_image)
-                    }
-                    setOnClickListener {
-                        pickImageResultLauncher.launch(
-                            PickVisualMediaRequest.Builder().setMediaType(
-                                ImageOnly
-                            ).build()
-                        )
-                    }
+        binding.apply {
+            title.text = getString(R.string.edit_product)
+            detailImage.apply {
+                load(args.product?.imageUrl) {
+                    crossfade(true)
+                    error(R.drawable.cannot_load_image)
                 }
-                detailName.editText?.let {
-                    it.setText(productToUpdate.name)
-                    it.doAfterTextChanged { editable ->
-                        nameChanged = productToUpdate.name != editable.toString()
-                        handleButtonEnableSetting()
-                    }
+                setOnClickListener {
+                    pickImageResultLauncher.launch(
+                        PickVisualMediaRequest.Builder().setMediaType(
+                            ImageOnly
+                        ).build()
+                    )
                 }
-                detailType.editText?.let {
-                    it.setText(productToUpdate.type.name)
-                    it.doAfterTextChanged { editable ->
-                        typeChanged = productToUpdate.type.name != editable.toString()
-                        handleButtonEnableSetting()
-                    }
+            }
+            detailName.editText?.let {
+                it.setText(args.product?.name)
+                it.doAfterTextChanged { editable ->
+                    validNameChange = args.product?.name != editable?.toString() &&
+                            !editable?.toString().isNullOrBlank()
+                    handleButtonEnableSetting()
                 }
-                detailDescription.editText?.let {
-                    it.setText(productToUpdate.description)
-                    it.doAfterTextChanged { editable ->
-                        descChanged = productToUpdate.description != editable.toString()
-                        handleButtonEnableSetting()
-                    }
+            }
+            detailType.editText?.let {
+                it.setText(args.product?.type?.name)
+                it.doAfterTextChanged { editable ->
+                    validTypeChange = args.product?.type?.name != editable?.toString()
+                    handleButtonEnableSetting()
                 }
-                detailPrice.editText?.let {
-                    it.setText(productToUpdate.price.toFormattedPrice())
-                    it.doAfterTextChanged { editable ->
-                        priceChanged = productToUpdate.price.toFormattedPrice() != editable.toString()
-                        handleButtonEnableSetting()
-                    }
+            }
+            detailDescription.editText?.let {
+                it.setText(args.product?.description)
+                it.doAfterTextChanged { editable ->
+                    validDescChange = args.product?.description != editable?.toString() &&
+                            !editable?.toString().isNullOrBlank()
+                    handleButtonEnableSetting()
                 }
-                confirmButton.setOnClickListener {
-                    viewModel.apply {
-                        if (isUpdatingProduct) {
+            }
+            detailPrice.editText?.let {
+                it.setText(args.product?.price?.toFormattedPrice())
+                it.doAfterTextChanged { editable ->
+                    validPriceChange =
+                        args.product?.price?.toFormattedPrice() != editable?.toString() &&
+                                !editable?.toString().isNullOrBlank()
+                    handleButtonEnableSetting()
+                }
+            }
+            confirmButton.setOnClickListener {
+                viewModel.apply {
+                    if (isUpdatingProduct) {
+                        args.product?.id?.let { id ->
                             onAction(
                                 ProductDetailAction.UpdateProduct(
-                                    id = productToUpdate.id,
+                                    id = id,
                                     name = detailNameEditText.text.toString(),
                                     image = currentImageFile,
                                     description = detailDescriptionEditText.text.toString(),
@@ -139,28 +149,28 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                                     price = detailPriceEditText.text.toString().toDouble()
                                 )
                             )
+                        }
+                    } else {
+                        if (currentImageFile == null) {
+                            Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_LONG)
+                                .show()
                         } else {
-                            if (detailTypeDropdownLayout.text.toString().toType() == null) {
-                                detailDescriptionEditText.text = null
-                                typeChanged = false
-                                Toast.makeText(requireContext(), "Invalid Type", Toast.LENGTH_LONG).show()
-                            } else if (currentImageFile == null) {
-                                Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_LONG).show()
-                            } else {
-                                let2(
-                                    detailTypeDropdownLayout.text.toString().toType(),
-                                    currentImageFile
-                                ) { type, imageFile ->
-                                    onAction(
-                                        ProductDetailAction.CreateProduct(
-                                            name = detailNameEditText.text.toString(),
-                                            imageFile = imageFile,
-                                            description = detailDescriptionEditText.text.toString(),
-                                            type = type,
-                                            price = detailPriceEditText.text.toString().toDouble()
-                                        )
+                            let5(
+                                detailTypeDropdownLayout.text.toString().toType(),
+                                currentImageFile,
+                                detailNameEditText.text.toString(),
+                                detailDescriptionEditText.text.toString(),
+                                detailPriceEditText.text.toString().toDouble(),
+                            ) { type, imageFile, name, desc, price ->
+                                onAction(
+                                    ProductDetailAction.CreateProduct(
+                                        name = name,
+                                        imageFile = imageFile,
+                                        description = desc,
+                                        type = type,
+                                        price = price
                                     )
-                                }
+                                )
                             }
                         }
                     }
