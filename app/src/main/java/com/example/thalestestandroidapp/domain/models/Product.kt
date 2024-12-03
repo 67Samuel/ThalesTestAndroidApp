@@ -30,6 +30,6 @@ enum class Type {
     PERSONAL, FAMILY, COMMERCIAL
 }
 
-enum class SortOptions {
-    NAME_ASC, NAME_DESC
+enum class SortOption {
+    DEFAULT, NAME_ASC, NAME_DESC
 }

@@ -3,6 +3,8 @@ package com.example.thalestestandroidapp.presentation.product_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thalestestandroidapp.domain.models.Product
+import com.example.thalestestandroidapp.domain.models.SortOption
+import com.example.thalestestandroidapp.domain.models.SortOption.*
 import com.example.thalestestandroidapp.domain.network.Repository
 import com.example.thalestestandroidapp.domain.util.NetworkError
 import com.example.thalestestandroidapp.domain.util.Result
@@ -27,6 +29,9 @@ class ProductListViewModel @Inject constructor(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+
+    private val _sortOption = MutableStateFlow(NAME_ASC)
+    val sortOption = _sortOption.asStateFlow()
 
     private val _productList = MutableStateFlow(emptyList<Product>())
     val productList = _productList.asStateFlow()
@@ -53,7 +58,17 @@ class ProductListViewModel @Inject constructor(
             ProductListAction.RefreshProducts -> viewModelScope.launch {
                 loadProducts()
             }
+
+            is ProductListAction.SortProductsBy -> viewModelScope.launch {
+                sortProducts(action.sortBy)
+            }
         }
+    }
+
+    private fun sortProducts(sortOption: SortOption) = when(sortOption) {
+        NAME_ASC -> _productList.update { it.sortedBy { product -> product.name } }
+        NAME_DESC -> _productList.update { it.sortedByDescending { product -> product.name } }
+        DEFAULT -> _productList.update { it.sortedBy { product -> product.id } }
     }
 
     private suspend fun loadProducts() {

@@ -14,9 +14,11 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductListBinding
 import com.example.thalestestandroidapp.domain.models.Product
+import com.example.thalestestandroidapp.domain.models.SortOption
 import com.example.thalestestandroidapp.presentation.product_detail.ProductDetailFragmentArgs
 import com.example.thalestestandroidapp.presentation.utils.observerScope
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -54,11 +56,30 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     //endregion
 
     private fun initViews() {
-        binding.productCreationFab.setOnClickListener {
-            Navigation.findNavController(binding.root).navigate(
-                ProductListFragmentDirections
-                    .actionProductListFragmentToProductDetailFragment()
-            )
+        binding.apply {
+            productCreationFab.setOnClickListener {
+                Navigation.findNavController(root).navigate(
+                    ProductListFragmentDirections
+                        .actionProductListFragmentToProductDetailFragment()
+                )
+            }
+
+            filterButton.setOnClickListener {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.sort_products_title)
+                    .setSingleChoiceItems(
+                        SortOption.entries.map { it.toString() }.toTypedArray(),
+                        0,
+                    ) { _, which ->
+                        val sortOption = when (which) {
+                            0 -> SortOption.DEFAULT
+                            1 -> SortOption.NAME_ASC
+                            else -> SortOption.NAME_DESC
+                        }
+                        viewModel.onAction(ProductListAction.SortProductsBy(sortOption))
+                    }
+                    .show()
+            }
         }
     }
 
