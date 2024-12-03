@@ -40,10 +40,27 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
         Timber.d("test: product=${args.updatedOrCreatedProduct}")
 
         subscribeObservers()
+        initViews()
         initRecyclerView()
     }
 
+    override fun onResume() {
+        super.onResume()
+        args.updatedOrCreatedProduct?.let {
+            viewModel.onAction(ProductListAction.RefreshProducts)
+        }
+    }
+
     //endregion
+
+    private fun initViews() {
+        binding.productCreationFab.setOnClickListener {
+            Navigation.findNavController(binding.root).navigate(
+                ProductListFragmentDirections
+                    .actionProductListFragmentToProductDetailFragment()
+            )
+        }
+    }
 
     private fun initRecyclerView() {
         recyclerViewAdapter = ProductRecyclerViewAdapter(this@ProductListFragment)

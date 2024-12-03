@@ -49,6 +49,10 @@ class ProductListViewModel @Inject constructor(
                     )
                 }
             }
+
+            ProductListAction.RefreshProducts -> viewModelScope.launch {
+                loadProducts()
+            }
         }
     }
 

@@ -4,4 +4,5 @@ import com.example.thalestestandroidapp.domain.models.Product
 
 sealed interface ProductListAction {
     data class OnProductClick(val product: Product): ProductListAction
+    data object RefreshProducts : ProductListAction
 }
