@@ -11,16 +11,18 @@ data class ProductDto(
     val name: String,
     val type: String,
     val imageUrl: String,
-    val description: String
+    val description: String,
+    val price: Double
 ) {
     companion object {
-        fun productDtoForCreation(name: String, imageUrl: String, description: String, type: Type): ProductDto {
+        fun productDtoForCreation(name: String, imageUrl: String, description: String, type: Type, price: Double): ProductDto {
             return ProductDto(
                 id = -1,
                 name = name,
                 type = type.toString(),
                 imageUrl = imageUrl,
-                description = description
+                description = description,
+                price = price
             )
         }
     }

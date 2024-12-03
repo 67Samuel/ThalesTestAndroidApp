@@ -29,14 +29,16 @@ class ProductRepositoryImpl @Inject constructor(
         name: String,
         imageUrl: String,
         description: String,
-        type: Type
+        type: Type,
+        price: Double
     ): Result<Product, NetworkError> = try {
         val postedProduct = productApi.postProduct(
             product = ProductDto.productDtoForCreation(
                 name = name,
                 imageUrl = imageUrl,
                 description = description,
-                type = type
+                type = type,
+                price = price
             )
         )
         Result.Success(postedProduct.toProduct())
@@ -49,7 +51,8 @@ class ProductRepositoryImpl @Inject constructor(
         name: String,
         imageUrl: String,
         description: String,
-        type: Type
+        type: Type,
+        price: Double
     ): Result<Product, NetworkError> = try {
         val updatedProductDto = productApi.updateProduct(
             id = id,
@@ -58,7 +61,8 @@ class ProductRepositoryImpl @Inject constructor(
                 name = name,
                 type = type.toString(),
                 imageUrl = imageUrl,
-                description = description
+                description = description,
+                price = price
             )
         )
         Result.Success(updatedProductDto.toProduct())

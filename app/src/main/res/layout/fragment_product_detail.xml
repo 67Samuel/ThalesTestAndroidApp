@@ -86,6 +86,25 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/detail_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/price"
+                app:prefixText="$"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/detail_description">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/detail_price_edit_text"
+                    android:inputType="numberDecimal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                 android:id="@+id/detail_type"
                 android:layout_width="match_parent"
@@ -94,7 +113,7 @@
                 android:hint="@string/product_type"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/detail_description">
+                app:layout_constraintTop_toBottomOf="@id/detail_price">
 
                 <AutoCompleteTextView
                     android:id="@+id/detail_type_dropdown_layout"

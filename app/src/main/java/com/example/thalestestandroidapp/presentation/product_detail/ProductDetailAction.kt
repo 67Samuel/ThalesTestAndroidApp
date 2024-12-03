@@ -11,14 +11,16 @@ sealed interface ProductDetailAction {
         val name: String? = null,
         val image: File? = null,
         val description: String? = null,
-        val type: Type? = null
+        val type: Type? = null,
+        val price: Double? = null,
     ): ProductDetailAction
 
     data class CreateProduct(
         val name: String,
         val imageFile: File,
         val description: String,
-        val type: Type
+        val type: Type,
+        val price: Double
     ): ProductDetailAction
 
     /**

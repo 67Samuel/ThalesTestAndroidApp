@@ -14,7 +14,8 @@ interface Repository {
         name: String,
         imageUrl: String,
         description: String,
-        type: Type
+        type: Type,
+        price: Double
     ): Result<Product, NetworkError>
 
     suspend fun updateProduct(
@@ -22,7 +23,8 @@ interface Repository {
         name: String,
         imageUrl: String,
         description: String,
-        type: Type
+        type: Type,
+        price: Double
     ): Result<Product, NetworkError>
 
     suspend fun replaceProductImage(

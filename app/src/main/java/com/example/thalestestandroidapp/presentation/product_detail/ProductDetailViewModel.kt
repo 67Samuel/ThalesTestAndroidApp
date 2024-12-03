@@ -49,7 +49,8 @@ class ProductDetailViewModel @Inject constructor(
                         name = action.name,
                         imageFile = action.image,
                         description = action.description,
-                        type = action.type
+                        type = action.type,
+                        price = action.price
                     )
                 }
             }
@@ -60,7 +61,8 @@ class ProductDetailViewModel @Inject constructor(
                         name = action.name,
                         imageFile = action.imageFile,
                         description = action.description,
-                        type = action.type
+                        type = action.type,
+                        price = action.price
                     )
                 }
             }
@@ -78,7 +80,8 @@ class ProductDetailViewModel @Inject constructor(
         name: String? = null,
         imageFile: File? = null,
         description: String? = null,
-        type: Type? = null
+        type: Type? = null,
+        price: Double? = null,
     ) {
         withContext(Main) {
             _isLoading.update { true }
@@ -129,7 +132,8 @@ class ProductDetailViewModel @Inject constructor(
                 updateProduct(
                     name = name,
                     description = description,
-                    type = type
+                    type = type,
+                    price = price
                 )
 
                 withContext(Main) {
@@ -143,7 +147,8 @@ class ProductDetailViewModel @Inject constructor(
         name: String? = null,
         imageUrl: String? = null,
         description: String? = null,
-        type: Type? = null
+        type: Type? = null,
+        price: Double? = null,
     ) {
         product.value?.let { originalProduct ->
             withContext(IO) {
@@ -152,7 +157,8 @@ class ProductDetailViewModel @Inject constructor(
                     name = name ?: originalProduct.name,
                     imageUrl = imageUrl ?: originalProduct.imageUrl,
                     description = description ?: originalProduct.description,
-                    type = type ?: originalProduct.type
+                    type = type ?: originalProduct.type,
+                    price = price ?: originalProduct.price
                 )) {
                     is Result.Error -> when (updateProductResult.error) {
                         NetworkError.GeneralNetworkError.COROUTINE_CANCELLATION -> {
@@ -185,7 +191,8 @@ class ProductDetailViewModel @Inject constructor(
         name: String,
         imageFile: File,
         description: String,
-        type: Type
+        type: Type,
+        price: Double
     ) {
         withContext(Main) {
             _isLoading.update { true }
@@ -221,7 +228,8 @@ class ProductDetailViewModel @Inject constructor(
                         name = name,
                         imageUrl = createProductImageResult.data, // The new url that the backend created
                         description = description,
-                        type = type
+                        type = type,
+                        price = price
                     )
 
                     withContext(Main) {
@@ -236,12 +244,12 @@ class ProductDetailViewModel @Inject constructor(
         name: String,
         imageUrl: String,
         description: String,
-        type: Type
+        type: Type,
+        price: Double
     ) {
         withContext(IO) {
             when (val createProductResult = repository.createProduct(
-                name = name, imageUrl = imageUrl, description = description, type = type
-
+                name = name, imageUrl = imageUrl, description = description, type = type, price = price
             )) {
                 is Result.Error -> when (createProductResult.error) {
                     NetworkError.GeneralNetworkError.COROUTINE_CANCELLATION -> {

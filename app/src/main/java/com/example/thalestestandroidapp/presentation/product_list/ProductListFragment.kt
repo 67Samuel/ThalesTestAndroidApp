@@ -74,7 +74,10 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
                         val sortOption = when (which) {
                             0 -> SortOption.DEFAULT
                             1 -> SortOption.NAME_ASC
-                            else -> SortOption.NAME_DESC
+                            2 -> SortOption.NAME_DESC
+                            3 -> SortOption.PRICE_ASC
+                            4 -> SortOption.PRICE_DESC
+                            else -> SortOption.DEFAULT
                         }
                         viewModel.onAction(ProductListAction.SortProductsBy(sortOption))
                     }

@@ -68,6 +68,8 @@ class ProductListViewModel @Inject constructor(
     private fun sortProducts(sortOption: SortOption) = when(sortOption) {
         NAME_ASC -> _productList.update { it.sortedBy { product -> product.name } }
         NAME_DESC -> _productList.update { it.sortedByDescending { product -> product.name } }
+        PRICE_ASC -> _productList.update { it.sortedBy { product -> product.price } }
+        PRICE_DESC -> _productList.update { it.sortedByDescending { product -> product.price } }
         DEFAULT -> _productList.update { it.sortedBy { product -> product.id } }
     }
 

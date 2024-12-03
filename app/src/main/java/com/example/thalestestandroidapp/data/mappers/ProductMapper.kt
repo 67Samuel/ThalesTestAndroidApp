@@ -19,16 +19,7 @@ fun ProductDto.toProduct(): Product {
             Type.entries.random()
         },
         imageUrl = imageUrl,
-        description = description
-    )
-}
-
-fun Product.toProductDto(): ProductDto {
-    return ProductDto(
-        id = id,
-        name = name,
-        type = type.toString(),
-        imageUrl = imageUrl,
-        description = description
+        description = description,
+        price = price
     )
 }

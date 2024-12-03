@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.domain.models.Product
+import com.example.thalestestandroidapp.presentation.utils.toFormattedPrice
 import timber.log.Timber
 
 class ProductRecyclerViewAdapter(private val interaction: Interaction? = null) :
@@ -72,6 +73,10 @@ class ProductRecyclerViewAdapter(private val interaction: Interaction? = null) :
             itemView.findViewById<TextView>(R.id.card_title).text = item.name
             itemView.findViewById<TextView>(R.id.card_type).text = item.type.toString()
             itemView.findViewById<TextView>(R.id.card_description).text = item.description
+            itemView.findViewById<TextView>(R.id.card_price).text = buildString {
+                append("$")
+                append(item.price.toFormattedPrice())
+            }
             itemView.findViewById<ImageView>(R.id.card_image).apply {
                 load(item.imageUrl) {
                     crossfade(true)

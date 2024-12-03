@@ -22,6 +22,7 @@ import com.example.thalestestandroidapp.presentation.utils.ifLet
 import com.example.thalestestandroidapp.presentation.utils.let2
 import com.example.thalestestandroidapp.presentation.utils.observerScope
 import com.example.thalestestandroidapp.presentation.utils.toFile
+import com.example.thalestestandroidapp.presentation.utils.toFormattedPrice
 import com.example.thalestestandroidapp.presentation.utils.toType
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -54,6 +55,7 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     private var imageChanged = false
     private var typeChanged = false
     private var descChanged = false
+    private var priceChanged = false
 
     private var currentImageFile: File? = null
 
@@ -67,7 +69,7 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     }
 
     private fun handleButtonEnableSetting() {
-        binding.confirmButton.isEnabled = nameChanged || imageChanged || descChanged || typeChanged
+        binding.confirmButton.isEnabled = nameChanged || imageChanged || descChanged || typeChanged || priceChanged
     }
 
     override fun onResume() {
@@ -117,6 +119,13 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                         handleButtonEnableSetting()
                     }
                 }
+                detailPrice.editText?.let {
+                    it.setText(productToUpdate.price.toFormattedPrice())
+                    it.doAfterTextChanged { editable ->
+                        priceChanged = productToUpdate.price.toFormattedPrice() != editable.toString()
+                        handleButtonEnableSetting()
+                    }
+                }
                 confirmButton.setOnClickListener {
                     viewModel.apply {
                         if (isUpdatingProduct) {
@@ -126,16 +135,17 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                                     name = detailNameEditText.text.toString(),
                                     image = currentImageFile,
                                     description = detailDescriptionEditText.text.toString(),
-                                    type = detailTypeDropdownLayout.text.toString().toType()
+                                    type = detailTypeDropdownLayout.text.toString().toType(),
+                                    price = detailPriceEditText.text.toString().toDouble()
                                 )
                             )
                         } else {
                             if (detailTypeDropdownLayout.text.toString().toType() == null) {
                                 detailDescriptionEditText.text = null
                                 typeChanged = false
-                                // TODO: Tell user that the Type field is invalid
+                                Toast.makeText(requireContext(), "Invalid Type", Toast.LENGTH_LONG).show()
                             } else if (currentImageFile == null) {
-                                // TODO: Tell user that there needs to be an image
+                                Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_LONG).show()
                             } else {
                                 let2(
                                     detailTypeDropdownLayout.text.toString().toType(),
@@ -146,7 +156,8 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                                             name = detailNameEditText.text.toString(),
                                             imageFile = imageFile,
                                             description = detailDescriptionEditText.text.toString(),
-                                            type = type
+                                            type = type,
+                                            price = detailPriceEditText.text.toString().toDouble()
                                         )
                                     )
                                 }
