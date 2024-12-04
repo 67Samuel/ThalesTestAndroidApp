@@ -1,9 +1,14 @@
 package com.example.thalestestandroidapp.presentation.product_list
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowInsets
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
@@ -64,7 +69,7 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
                 AlertDialog.Builder(requireContext())
                     .setTitle(getString(R.string.sort_products_title))
                     .setPositiveButton(getString(R.string.sort_products_confirm)) { dialogInterface, _ ->
-                        viewModel.onAction(ProductListAction.SortProductsBy(selectedSortOption))
+                        viewModel.onAction(ProductListAction.SortProducts(selectedSortOption))
                         dialogInterface.dismiss()
                     }
                     .setSingleChoiceItems(
@@ -81,6 +86,18 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
                         }
                     }
                     .show()
+            }
+
+            searchBarEditText.addTextChangedListener { editable ->
+                viewModel.onAction(ProductListAction.FilterProducts(editable?.toString() ?: ""))
+            }
+
+            ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+                val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+                if (!imeVisible) {
+                    searchBar.clearFocus()
+                }
+                insets
             }
         }
     }

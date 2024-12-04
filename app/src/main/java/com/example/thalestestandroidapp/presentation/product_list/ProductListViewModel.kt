@@ -33,6 +33,11 @@ class ProductListViewModel @Inject constructor(
     private val _sortOption = MutableStateFlow(NAME_ASC)
     val sortOption = _sortOption.asStateFlow()
 
+    /**
+     * Always maintains the latest full (unfiltered) product list
+     */
+    private var _fullProductList = emptyList<Product>()
+
     private val _productList = MutableStateFlow(emptyList<Product>())
     val productList = _productList.asStateFlow()
 
@@ -59,18 +64,43 @@ class ProductListViewModel @Inject constructor(
                 loadProducts()
             }
 
-            is ProductListAction.SortProductsBy -> viewModelScope.launch {
+            is ProductListAction.SortProducts -> viewModelScope.launch {
                 sortProducts(action.sortBy)
             }
+
+            is ProductListAction.FilterProducts -> filterProducts(action.text)
         }
     }
 
     private fun sortProducts(sortOption: SortOption) = when(sortOption) {
-        NAME_ASC -> _productList.update { it.sortedBy { product -> product.name } }
-        NAME_DESC -> _productList.update { it.sortedByDescending { product -> product.name } }
-        PRICE_ASC -> _productList.update { it.sortedBy { product -> product.price } }
-        PRICE_DESC -> _productList.update { it.sortedByDescending { product -> product.price } }
-        DEFAULT -> _productList.update { it.sortedBy { product -> product.id } }
+        NAME_ASC -> {
+            _fullProductList.sortedBy { product -> product.name }
+            _productList.update { it.sortedBy { product -> product.name } }
+        }
+        NAME_DESC -> {
+            _fullProductList.sortedByDescending { product -> product.name }
+            _productList.update { it.sortedByDescending { product -> product.name } }
+        }
+        PRICE_ASC -> {
+            _fullProductList.sortedBy { product -> product.price }
+            _productList.update { it.sortedBy { product -> product.price } }
+        }
+        PRICE_DESC -> {
+            _fullProductList.sortedByDescending { product -> product.price }
+            _productList.update { it.sortedByDescending { product -> product.price } }
+        }
+        DEFAULT -> {
+            _fullProductList.sortedBy { product -> product.id }
+            _productList.update { it.sortedBy { product -> product.id } }
+        }
+    }
+    
+    private fun filterProducts(text: String) {
+        _productList.update {
+            _fullProductList.filter { product ->
+                product.name.contains(text, ignoreCase = true)
+            }
+        }
     }
 
     private suspend fun loadProducts() {
@@ -88,6 +118,7 @@ class ProductListViewModel @Inject constructor(
                 }
                 is Result.Success -> {
                     _productList.update { result.data }
+                    _fullProductList = result.data
                 }
             }
 
