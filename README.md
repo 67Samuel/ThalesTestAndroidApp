@@ -3,7 +3,7 @@ This is a view-based app that interfaces with a test backend for Products and an
 ## Features
 - A list of Products that contain name, type, picture, price, and description properties
 - Create and edit one Product
-- Sort Products by price and type
+- Sort Products by price and filter by type
 - Search products by name
 ## Backend
 ### Product
