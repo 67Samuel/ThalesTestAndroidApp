@@ -1,9 +1,7 @@
 package com.example.thalestestandroidapp.presentation.product_list
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.WindowInsets
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
@@ -21,7 +19,6 @@ import com.example.thalestestandroidapp.domain.models.SortOption
 import com.example.thalestestandroidapp.presentation.utils.observerScope
 import com.google.android.flexbox.FlexboxLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment(R.layout.fragment_product_list),
@@ -39,8 +36,6 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Timber.d("test: product=${args.updatedOrCreatedProduct}")
-
         subscribeObservers()
         initViews()
         initRecyclerView()
@@ -54,6 +49,8 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     }
 
     //endregion
+
+    //region Init
 
     private fun initViews() {
         binding.apply {
@@ -151,6 +148,8 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
             }
         }
     }
+
+    //endregion
 
     //region Overrides
 

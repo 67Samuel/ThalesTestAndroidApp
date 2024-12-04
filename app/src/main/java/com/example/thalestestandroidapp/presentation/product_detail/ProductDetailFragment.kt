@@ -18,7 +18,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.load
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductDetailBinding
-import com.example.thalestestandroidapp.presentation.utils.ifLet
 import com.example.thalestestandroidapp.presentation.utils.let2
 import com.example.thalestestandroidapp.presentation.utils.observerScope
 import com.example.thalestestandroidapp.presentation.utils.toFile
@@ -59,6 +58,8 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
 
     private var currentImageFile: File? = null
 
+    //region Lifecycle
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -66,10 +67,6 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
 
         subscribeObservers()
         initViews()
-    }
-
-    private fun handleButtonEnableSetting() {
-        binding.confirmButton.isEnabled = nameChanged || imageChanged || descChanged || typeChanged || priceChanged
     }
 
     override fun onResume() {
@@ -80,6 +77,10 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, productTypes)
         binding.detailTypeDropdownLayout.setAdapter(arrayAdapter)
     }
+
+    //endregion
+
+    //region Init
 
     private fun initViews() {
         args.product?.let { productToUpdate ->
@@ -222,6 +223,14 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         }
     }
 
+    //endregion
+
+    //region Convenience
+
+    private fun handleButtonEnableSetting() {
+        binding.confirmButton.isEnabled = nameChanged || imageChanged || descChanged || typeChanged || priceChanged
+    }
+
     private fun ImageView.loadProductImage(imageUrl: Any?) {
         load(imageUrl) {
             crossfade(true)
@@ -243,5 +252,7 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
             )
         }
     }
+
+    //region
 
 }

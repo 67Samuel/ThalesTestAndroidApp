@@ -13,7 +13,6 @@ import coil.load
 import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.domain.models.Product
 import com.example.thalestestandroidapp.presentation.utils.toFormattedPrice
-import timber.log.Timber
 
 class ProductRecyclerViewAdapter(private val interaction: Interaction? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {

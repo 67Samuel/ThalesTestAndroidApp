@@ -1,10 +1,7 @@
 package com.example.thalestestandroidapp.domain.models
 
-import android.icu.text.NumberFormat
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import java.io.File
-import java.util.Locale
 
 
 @Parcelize
