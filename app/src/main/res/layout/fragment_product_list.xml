@@ -20,7 +20,6 @@
             android:textStyle="bold"
             android:fontFamily="@font/kanit_bold"
             android:textColor="@color/md_theme_primary"
-            android:layout_marginStart="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/filter_button"/>
@@ -36,14 +35,71 @@
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+<!--        <androidx.appcompat.widget.SearchView-->
+<!--            style="@style/Widget.Material3.SearchBar"-->
+<!--            android:id="@+id/search_bar"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="start"-->
+<!--            android:hint="@string/search_products_by_name"-->
+<!--            app:queryBackground="@color/white"-->
+<!--            app:queryHint="query hint"-->
+<!--            android:text="search"-->
+<!--            app:defaultQueryHint="hi"-->
+<!--            android:autofillHints="hey"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/title"/>-->
+        
+<!--        <com.google.android.material.search.SearchBar-->
+<!--            android:id="@+id/search_bar"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="start"-->
+<!--            android:hint="@string/search_products_by_name"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/title">-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/search_bar_edit_text"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="hey"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:layout_marginEnd="8dp"/>-->
+
+<!--        </com.google.android.material.search.SearchBar>-->
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/search_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_products_by_name"
+            app:startIconDrawable="@drawable/baseline_search_24"
+            app:endIconDrawable="@drawable/baseline_cancel_24"
+            app:endIconMode="clear_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/search_bar_edit_text"
+                android:inputType="text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="-8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintTop_toBottomOf="@id/search_bar"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ProgressBar
@@ -65,6 +121,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:backgroundTint="@color/md_theme_inverseSurface"
+        android:textColor="@color/md_theme_inverseOnSurface"
+        app:iconTint="@color/md_theme_inverseOnSurface"
         android:text="@string/add_product"
         android:contentDescription="@string/create_a_new_product"
         app:icon="@drawable/baseline_add_24"/>

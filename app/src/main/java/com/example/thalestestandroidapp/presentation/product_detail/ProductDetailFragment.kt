@@ -60,6 +60,8 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
 
     private var currentImageFile: File? = null
 
+    //region Lifecycle
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -67,15 +69,6 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
 
         subscribeObservers()
         initViews()
-    }
-
-    private fun handleButtonEnableSetting() {
-        binding.confirmButton.isEnabled = if (viewModel.isUpdatingProduct) {
-            validNameChange || validImageChange || validDescChange || validTypeChange || validPriceChange
-        } else {
-            validNameChange && validImageChange && validDescChange && validTypeChange && validPriceChange
-        }
-
     }
 
     override fun onResume() {
@@ -86,6 +79,10 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, productTypes)
         binding.detailTypeDropdownLayout.setAdapter(arrayAdapter)
     }
+
+    //endregion
+
+    //region Init
 
     private fun initViews() {
         binding.apply {
@@ -232,6 +229,19 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         }
     }
 
+    //endregion
+
+    //region Convenience
+
+    private fun handleButtonEnableSetting() {
+        binding.confirmButton.isEnabled = if (viewModel.isUpdatingProduct) {
+            validNameChange || validImageChange || validDescChange || validTypeChange || validPriceChange
+        } else {
+            validNameChange && validImageChange && validDescChange && validTypeChange && validPriceChange
+        }
+
+    }
+
     private fun ImageView.loadProductImage(imageUrl: Any?) {
         load(imageUrl) {
             crossfade(true)
@@ -253,5 +263,7 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
             )
         }
     }
+
+    //region
 
 }

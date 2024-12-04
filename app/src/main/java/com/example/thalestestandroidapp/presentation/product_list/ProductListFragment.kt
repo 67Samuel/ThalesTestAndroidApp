@@ -3,11 +3,12 @@ package com.example.thalestestandroidapp.presentation.product_list
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -15,13 +16,9 @@ import com.example.thalestestandroidapp.R
 import com.example.thalestestandroidapp.databinding.FragmentProductListBinding
 import com.example.thalestestandroidapp.domain.models.Product
 import com.example.thalestestandroidapp.domain.models.SortOption
-import com.example.thalestestandroidapp.presentation.product_detail.ProductDetailFragmentArgs
 import com.example.thalestestandroidapp.presentation.utils.observerScope
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment(R.layout.fragment_product_list),
@@ -39,8 +36,6 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Timber.d("test: product=${args.updatedOrCreatedProduct}")
-
         subscribeObservers()
         initViews()
         initRecyclerView()
@@ -55,6 +50,8 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
 
     //endregion
 
+    //region Init
+
     private fun initViews() {
         binding.apply {
             productCreationFab.setOnClickListener {
@@ -65,13 +62,18 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
             }
 
             filterButton.setOnClickListener {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.sort_products_title)
+                var selectedSortOption = SortOption.DEFAULT
+                AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.sort_products_title))
+                    .setPositiveButton(getString(R.string.sort_products_confirm)) { dialogInterface, _ ->
+                        viewModel.onAction(ProductListAction.SortProducts(selectedSortOption))
+                        dialogInterface.dismiss()
+                    }
                     .setSingleChoiceItems(
                         SortOption.entries.map { it.toString() }.toTypedArray(),
                         0,
                     ) { _, which ->
-                        val sortOption = when (which) {
+                        selectedSortOption = when (which) {
                             0 -> SortOption.DEFAULT
                             1 -> SortOption.NAME_ASC
                             2 -> SortOption.NAME_DESC
@@ -79,9 +81,20 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
                             4 -> SortOption.PRICE_DESC
                             else -> SortOption.DEFAULT
                         }
-                        viewModel.onAction(ProductListAction.SortProductsBy(sortOption))
                     }
                     .show()
+            }
+
+            searchBarEditText.addTextChangedListener { editable ->
+                viewModel.onAction(ProductListAction.FilterProducts(editable?.toString() ?: ""))
+            }
+
+            ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+                val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+                if (!imeVisible) {
+                    searchBar.clearFocus()
+                }
+                insets
             }
         }
     }
@@ -135,6 +148,8 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list),
             }
         }
     }
+
+    //endregion
 
     //region Overrides
 

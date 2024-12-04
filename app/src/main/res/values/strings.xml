@@ -27,4 +27,6 @@
     <string name="add_product">Add Product</string>
     <string name="sort_products_title">Sort Products By:</string>
     <string name="price">Price in USD</string>
+    <string name="sort_products_confirm">Confirm</string>
+    <string name="search_products_by_name">Search Products by Name</string>
 </resources>
