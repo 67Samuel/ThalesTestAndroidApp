@@ -13,7 +13,7 @@ This is a view-based app that interfaces with a test backend for Products and an
 - Create and edit one Product
 - Sort Products by price and name
 - Search and filter Products by name
-- 
+
 ## Backend
 ### Product
 `GET` all Products: `https://673f398fa9bc276ec4b7b67c.mockapi.io/product`<br/>
